@@ -54,11 +54,56 @@
         cursor: pointer;
         border-radius: 5px;
       }
+
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        flex-direction: column;
+      }
+
+      .loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      #loading-message {
+        color: white;
+        font-size: 20px;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+      }
     </style>
   </head>
 
   <body>
     <div class="container">
+      <div id="overlay" style="display: none">
+        <div class="loader"></div>
+        <p id="loading-message">Carregando...</p>
+      </div>
+
       <h1>Tirar foto com a câmera</h1>
       <video id="video" autoplay></video>
       <div id="capture">
@@ -81,16 +126,62 @@
           });
       }
 
-      function capture() {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        const width = video.videoWidth;
-        const height = video.videoHeight;
-        canvas.width = width;
-        canvas.height = height;
-        context.drawImage(video, 0, 0, width, height);
-        const image = canvas.toDataURL("image/png");
-        console.log(image);
+      async function capture() {
+        try {
+          showLoading("Aguarde enquanto processamos a sua imagem...");
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          const width = video.videoWidth;
+          const height = video.videoHeight;
+          canvas.width = width;
+          canvas.height = height;
+          context.drawImage(video, 0, 0, width, height);
+          const image = canvas.toDataURL("image/png");
+          console.log(image);
+
+          const food = await applyAlgorithm(image);
+          if (food) {
+            await searchNutritionalInformation(food);
+          }
+        } catch (error) {
+          console.error(error);
+        } finally {
+          hideLoading();
+        }
+      }
+
+      function showLoading(message = "Carregando...") {
+        document.getElementById("overlay").style.display = "flex";
+        document.getElementById("loading-message").textContent = message;
+      }
+
+      function hideLoading() {
+        document.getElementById("overlay").style.display = "none";
+      }
+
+      async function searchNutritionalInformation(food) {
+        if (!food) {
+          throw new Error();
+        }
+
+        try {
+          const nutritionalInformation = await doPost("/search", {
+            query: food,
+          });
+          return nutritionalInformation;
+        } catch (error) {
+          return {};
+        }
+      }
+
+      async function doPost(url, body) {
+        return fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        });
       }
 
       async function applyAlgorithm(image) {
@@ -98,25 +189,15 @@
           return;
         }
 
+        let food = undefined;
+
         try {
-          const food = await fetch("/algorithm", {
-            method: "POST",
-            mode: "same-origin",
-            cache: "no-cache",
-            credentials: "same-origin",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: {
-              image,
-            },
-          });
-          console.log(food);
+          food = await doPost("/algorithm", { image });
         } catch (error) {
           console.error(error);
         }
+
+        return food;
       }
     </script>
   </body>
