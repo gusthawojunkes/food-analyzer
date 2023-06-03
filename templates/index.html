@@ -217,15 +217,16 @@
         height: 100%;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.4);
+        align-items: center;
+        justify-content: center;
       }
 
       .error-modal-content {
         background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
+        padding: 2em;
         border: 1px solid #888;
         border-radius: 10px;
-        width: 500px;
+        max-width: 90%;
         text-align: center;
       }
 
@@ -432,11 +433,10 @@
         const $foodNameDiv = document.getElementById("food-main-info-content");
         if ($foodNameDiv) {
           $foodNameDiv.style.display = "";
-          if (name) {
-            $foodNameDiv.innerHTML = `Alimento: ${
-              name[0].toUpperCase() + name.substring(1).toLowerCase()
-            }`;
-          }
+          const displayName = name
+            ? name[0].toUpperCase() + name.substring(1).toLowerCase()
+            : "Sem nome";
+          $foodNameDiv.innerHTML = `<strong>${displayName}</strong>`;
         }
       }
 
@@ -493,7 +493,7 @@
         var $modal = document.getElementById("errorModal");
         var $errorMessageElement = document.getElementById("errorMessage");
         $errorMessageElement.innerHTML = message;
-        $modal.style.display = "block";
+        $modal.style.display = "flex";
         setTimeout(hideErrorModal, 10000);
       }
 
