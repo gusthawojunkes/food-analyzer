@@ -1,0 +1,10 @@
+[project]
+name = "food-analyzer"
+version = "1.0.0"
+dependencies = [
+    "Flask",
+    "requests",
+    "python-dotenv",
+    "build",
+    "setuptools"
+]

@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
   <head>
+    <link
+      rel="icon"
+      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzklEQVRIDc3SsQnCUBQE0NyaJBA0V4mJjHGA2Z7OQYXKFWlE3im0BqwFiNcDcwFwNGgGwBd5AnMC9wDWwEeKoh7e8gT85mB4/x9vjh3DKoMZGGX4gAXXwE4h6OEA6AMcAbwhqAJ8BE0AocAo4Ca4BcwGeACsA8wDCAG+AjcCS4h9Gh+Z6A1bDFGBm9AG2AZqAcQCtwC+Aq+D4gAswFsAi8FdwAa8CvcBbYBvoCdYBC+CPiCHwExgB/QG3AHuAWuACfgN9APMBSaEeAgZFGOMqgMzIQ+4A0gBegG2ACXAfIBuAEsAQXABpwFvAJcBbYAqgJwAn8BXkA3AG+AdEAs+ewT9BjDEd1lUn5dDAAAAAElFTkSuQmCC"
+      type="image/png"
+    />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tirar foto com a câmera</title>
+    <title>Food Analyzer</title>
+
     <style>
       * {
         box-sizing: border-box;
@@ -17,11 +24,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        text-align: center;
       }
 
       .container {
-        max-width: 500px;
+        max-width: 100%;
+        max-width: 1200px;
         background-color: #fff;
         padding: 20px;
         border-radius: 5px;
@@ -94,6 +102,158 @@
         margin-left: auto;
         margin-right: auto;
       }
+
+      .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .search-input {
+        width: 300px;
+        height: 40px;
+        padding: 10px;
+        border: none;
+        border-radius: 20px 0 0 20px;
+        font-size: 16px;
+        background-color: #f2f2f2;
+        color: #333;
+      }
+
+      .search-button {
+        width: 40px;
+        height: 40px;
+        background-color: #4caf50;
+        border: none;
+        border-radius: 0 20px 20px 0;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .search-button svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        fill: #fff;
+        width: 24px;
+        height: 24px;
+      }
+
+      #info {
+        margin-top: 20px;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        font-size: 16px;
+        line-height: 1.5;
+        border: none;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+        resize: none;
+      }
+      table {
+        margin-top: 20px;
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      table thead th {
+        background-color: #4caf50;
+        color: white;
+        text-align: left;
+        padding: 10px;
+      }
+
+      table tbody td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      th {
+        white-space: nowrap;
+      }
+
+      #tableContainer {
+        overflow: auto;
+      }
+
+      #empty-table-message {
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+        font-size: 18px;
+        color: #888;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+
+      .food-name {
+        margin-top: 20px;
+        background-color: #f5f5f5;
+        padding: 10px;
+        text-align: left;
+        font-size: 18px;
+        color: #333;
+      }
+
+      .error-modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .error-modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        width: 500px;
+        text-align: center;
+      }
+
+      .error-modal-content button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 7px;
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+      }
+
+      .error-modal-content i {
+        color: #ff0000;
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+
+      .error-modal-content p {
+        text-align: left;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
     </style>
   </head>
 
@@ -104,15 +264,74 @@
         <p id="loading-message">Carregando...</p>
       </div>
 
-      <h1>Tirar foto com a câmera</h1>
+      <div id="errorModal" class="error-modal">
+        <div class="error-modal-content">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+          >
+            <path
+              fill="#FF0000"
+              d="M24 48C10.75 48 0 37.25 0 24S10.75 0 24 0s24 10.75 24 24-10.75 24-24 24zm0-44C11.85 4 4 11.85 4 24s7.85 20 20 20 20-7.85 20-20S36.15 4 24 4zm.25 7.5h-.5c-.828 0-1.5.672-1.5 1.5v16c0 .828.672 1.5 1.5 1.5h.5c.828 0 1.5-.672 1.5-1.5v-16c0-.828-.672-1.5-1.5-1.5zm.25 25.5c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5z"
+            />
+          </svg>
+          <p id="errorMessage"></p>
+          <button onclick="hideErrorModal()">OK</button>
+        </div>
+      </div>
+
+      <h2>Busque pelo seu alimento</h2>
+      <div class="search-container">
+        <input
+          id="search-input"
+          type="text"
+          class="search-input"
+          placeholder="Ex: Banana, Aveia, etc..."
+        />
+        <button class="search-button" onclick="searchByFoodFromInput()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.68 0 3.22-.64 4.37-1.69l.27.28v.79l5 4.99L20.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <h3>Ou</h3>
+
+      <h2>Escaneie com a câmera</h2>
       <video id="video" autoplay></video>
       <div id="capture">
-        <button onclick="capture()">Capturar Foto</button>
+        <button onclick="scanImage()">Escanear</button>
+      </div>
+      <div
+        id="food-main-info-content"
+        style="display: none"
+        class="food-name"
+      ></div>
+      <div id="tableContainer">
+        <div id="empty-table-message">Sem resultados por enquanto</div>
+        <div id="food-main-info"></div>
       </div>
     </div>
 
     <script>
       const video = document.getElementById("video");
+
+      const labelByKey = {
+        brandOwner: "Empresa",
+        dataType: "Tipo de dado",
+        description: "Descrição",
+        fdcId: "ID",
+        gtinUpc: "gtinUpc",
+        publicationDate: "Data de publicação",
+        amount: "Porção",
+        name: "Nutriente",
+        quantity: "Quantidade",
+      };
 
       if (navigator.mediaDevices?.getUserMedia) {
         navigator.mediaDevices
@@ -126,37 +345,170 @@
           });
       }
 
-      async function capture() {
-        try {
-          showLoading("Aguarde enquanto processamos a sua imagem...");
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          const width = video.videoWidth;
-          const height = video.videoHeight;
-          canvas.width = width;
-          canvas.height = height;
-          context.drawImage(video, 0, 0, width, height);
-          const image = canvas.toDataURL("image/png");
-          console.log(image);
+      async function searchByFoodFromInput() {
+        const $input = document.getElementById("search-input");
+        const food = $input.value?.trim();
+        console.log(food);
+        await search(food);
+      }
 
-          const food = await applyAlgorithm(image);
-          if (food) {
-            await searchNutritionalInformation(food);
+      async function search(
+        food = undefined,
+        loadingMessage = "Aguarde enquanto processamos a sua busca..."
+      ) {
+        try {
+          if (!food || food === "") {
+            throw new Error(
+              "<h3>Nenhum alimento informado!</h3>Impossível encontrar os dados nutricionais"
+            );
           }
+          startLoading(loadingMessage);
+          const nutritionalInformation = await searchNutritionalInformation(
+            food
+          );
+          if (!nutritionalInformation) {
+            throw new Error(
+              `<h3>Sem dados.</h3>Não foi possível encontrar as informações nutricionais do alimento '${food}'!`
+            );
+          }
+          const nutrients = prepareNutritionalInformation(
+            nutritionalInformation
+          );
+          removeOldContent();
+          addFoodMainInformationToContent(nutritionalInformation.description);
+          createNutritionalInformationTableDynamically(nutrients);
         } catch (error) {
           console.error(error);
+          if (error.message && error.message !== "") {
+            showErrorModal(error.message);
+          } else {
+            showErrorModal();
+          }
         } finally {
-          hideLoading();
+          stopLoading();
+          hideNoResultsField();
         }
       }
 
-      function showLoading(message = "Carregando...") {
+      function hideNoResultsField() {
+        const $div = document.getElementById("empty-table-message");
+        if ($div) {
+          $div.style.display = "none";
+        }
+      }
+
+      function captureImage() {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(video, 0, 0, width, height);
+        const image = canvas.toDataURL("image/png");
+
+        return image;
+      }
+
+      async function scanImage() {
+        try {
+          const image = captureImage();
+          const food = await applyAlgorithm(image);
+          if (!food || food === "") {
+            throw new Error(
+              "Nenhum alimento informado, impossível encontrar os dados nutricionais!"
+            );
+          }
+          await search(food, "Aguarde enquanto processamos a sua imagem...");
+        } catch (error) {
+          console.error(error);
+        } finally {
+          stopLoading();
+          hideNoResultsField();
+        }
+      }
+
+      function addFoodMainInformationToContent(name) {
+        const $foodNameDiv = document.getElementById("food-main-info-content");
+        if ($foodNameDiv) {
+          $foodNameDiv.style.display = "";
+          $foodNameDiv.innerHTML = `Alimento: ${
+            name[0].toUpperCase() + name.substring(1).toLowerCase()
+          }`;
+        }
+      }
+
+      function removeOldContent() {
+        document.getElementById("tableContainer").innerHTML = "";
+        const $foodNameDiv = document.getElementById("food-main-info-content");
+        if ($foodNameDiv) {
+          $foodNameDiv.style.display = "none";
+          $foodNameDiv.innerHTML = "";
+        }
+      }
+
+      function createNutritionalInformationTableDynamically(nutrients) {
+        let $tableContainer = document.getElementById("tableContainer");
+        let $table = document.createElement("table");
+        let $thead = document.createElement("thead");
+        let $tbody = document.createElement("tbody");
+        let $headerRow = document.createElement("tr");
+
+        let firstNutrient = nutrients[0];
+        for (let subKey in firstNutrient) {
+          let th = document.createElement("th");
+          th.textContent = labelByKey[subKey] ?? subKey;
+          $headerRow.appendChild(th);
+        }
+
+        $thead.appendChild($headerRow);
+        $table.appendChild($thead);
+
+        for (let nutrient of nutrients) {
+          let $row = document.createElement("tr");
+          for (let subKey in nutrient) {
+            let $td = document.createElement("td");
+            $td.textContent = nutrient[subKey];
+            $row.appendChild($td);
+          }
+          $tbody.appendChild($row);
+        }
+
+        $table.appendChild($tbody);
+        $tableContainer.appendChild($table);
+      }
+
+      function startLoading(message = "Carregando...") {
         document.getElementById("overlay").style.display = "flex";
         document.getElementById("loading-message").textContent = message;
       }
 
-      function hideLoading() {
+      function stopLoading() {
         document.getElementById("overlay").style.display = "none";
+      }
+
+      function showErrorModal(message = `Ocorreu um erro!`) {
+        var $modal = document.getElementById("errorModal");
+        var $errorMessageElement = document.getElementById("errorMessage");
+        $errorMessageElement.innerHTML = message;
+        $modal.style.display = "block";
+        setTimeout(hideErrorModal, 10000);
+      }
+
+      function hideErrorModal() {
+        var modal = document.getElementById("errorModal");
+        modal.style.display = "none";
+      }
+
+      function prepareNutritionalInformation(nutritionalInformation) {
+        return (nutritionalInformation.foodNutrients ?? []).map((nutrient) => {
+          return {
+            name: nutrient.name,
+            amount: nutrient.amount,
+            quantity:
+              `${nutrient.number}${nutrient.unitName}`.toLocaleLowerCase(),
+          };
+        });
       }
 
       async function searchNutritionalInformation(food) {
@@ -164,40 +516,56 @@
           throw new Error();
         }
 
+        console.log(`Requesting Nutricional Information`);
+
         try {
-          const nutritionalInformation = await doPost("/search", {
+          const response = await doPost("/search", {
             query: food,
+            pageSize: 1,
           });
-          return nutritionalInformation;
+          let nutritionalInformation = await response.text();
+          return JSON.parse(nutritionalInformation)[0];
         } catch (error) {
           return {};
         }
       }
 
-      async function doPost(url, body) {
-        return fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body,
-        });
+      async function applyAlgorithm(image) {
+        return "Banana";
+
+        // if (!image?.includes("data:image/png;base64,")) {
+        //   return;
+        // }
+
+        // console.log(`Applying Algorithm`);
+
+        // let food = undefined;
+
+        // try {
+        //   food = await doPost("/algorithm", { image });
+        // } catch (error) {
+        //   console.error(error);
+        // }
+
+        // return food;
       }
 
-      async function applyAlgorithm(image) {
-        if (!image?.includes("data:image/png;base64,")) {
-          return;
-        }
-
-        let food = undefined;
-
+      async function doPost(url, body) {
+        console.log(`[API HANDLER] Requesting to: ${url}`);
+        let response = undefined;
         try {
-          food = await doPost("/algorithm", { image });
+          response = await fetch(`/api${url}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
         } catch (error) {
           console.error(error);
         }
 
-        return food;
+        return response;
       }
     </script>
   </body>
