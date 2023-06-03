@@ -432,9 +432,11 @@
         const $foodNameDiv = document.getElementById("food-main-info-content");
         if ($foodNameDiv) {
           $foodNameDiv.style.display = "";
-          $foodNameDiv.innerHTML = `Alimento: ${
-            name[0].toUpperCase() + name.substring(1).toLowerCase()
-          }`;
+          if (name) {
+            $foodNameDiv.innerHTML = `Alimento: ${
+              name[0].toUpperCase() + name.substring(1).toLowerCase()
+            }`;
+          }
         }
       }
 
