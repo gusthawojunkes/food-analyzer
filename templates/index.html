@@ -429,6 +429,14 @@
         }
       }
 
+      function scrollToNutritionalInformationTable() {
+        const targetElement = document.getElementById("tableContainer");
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+
       function addFoodMainInformationToContent(name) {
         const $foodNameDiv = document.getElementById("food-main-info-content");
         if ($foodNameDiv) {
