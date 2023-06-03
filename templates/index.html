@@ -378,6 +378,7 @@
           removeOldContent();
           addFoodMainInformationToContent(nutritionalInformation.description);
           createNutritionalInformationTableDynamically(nutrients);
+          scrollToNutritionalInformationTable();
         } catch (error) {
           console.error(error);
           if (error.message && error.message !== "") {
