@@ -31,7 +31,7 @@ def search():
 
     criteria['query'] = translated_food
 
-    return fdc_api.search_food_by_criteria(criteria)
+    return fdc_api.search_food_by_criteria(criteria)[0]
 
 """
 {

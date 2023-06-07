@@ -49,7 +49,7 @@
           class="search-input"
           placeholder="Ex: Banana, Aveia, etc..."
         />
-        <button class="search-button" onclick="searchByFoodFromInput()">
+        <button class="search-button" onclick="FoodController.searchByInput()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M0 0h24v24H0z" fill="none" />
             <path
@@ -64,7 +64,7 @@
       <h2>Escaneie com a câmera</h2>
       <video id="video" autoplay></video>
       <div id="capture">
-        <button onclick="scanImage()">Escanear</button>
+        <button onclick="Camera.scan()">Escanear</button>
       </div>
       <div
         id="food-main-info-content"
