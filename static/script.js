@@ -14,7 +14,7 @@ const labelByKey = {
 
 if (navigator.mediaDevices?.getUserMedia) {
   navigator.mediaDevices
-    .getUserMedia({ video: true, facingMode: "environment" })
+    .getUserMedia({ video: { facingMode: "environment" } })
     .then(function (stream) {
       video.srcObject = stream;
       video.play();
