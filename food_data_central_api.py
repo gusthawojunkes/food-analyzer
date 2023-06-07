@@ -1,4 +1,10 @@
 import requests
+from translator import Translator
+
+PT_BR = "pt-BR"
+EN_US = "en-US"
+
+translator = Translator()
 
 class FDCAPI:
     def __init__(self, host, api_key):
@@ -15,15 +21,10 @@ class FDCAPI:
             response = requests.get(url)
         elif request_type == 'POST':
             headers = {"Content-Type": "application/json"}
-            print(f"Headers: {headers}")
-            print(f"Body: {body}")
             response = requests.post(url, json=body, headers=headers)
 
         if response.status_code == 200:
-            data = response.json()
-            size = len(data)
-            print(f"Found {size} registers")
-            return data
+            return response.json()
         else:
             print(response.json())
             print(f"Status code: {response.status_code}")
@@ -50,4 +51,25 @@ class FDCAPI:
     }
     """
     def search_food_by_criteria(self, criteria = {}):
-        return self.request('v1/foods/list', body = criteria, request_type = 'POST')
+        founded = []
+        response = self.request('v1/foods/list', body = criteria, request_type = 'POST')
+        for row in response:
+            description = row['description']
+            translated_description = translator.perform(description, {
+                "from": EN_US,
+                "to": PT_BR
+            })
+
+            row['description'] = translated_description
+
+            for nutrient in row['foodNutrients']:
+                name = nutrient['name']
+                translated_nutrient = translator.perform(name, {
+                    "from": EN_US,
+                    "to": PT_BR
+                })
+                nutrient['name'] = translated_nutrient
+
+            founded.append(row)
+
+        return founded
