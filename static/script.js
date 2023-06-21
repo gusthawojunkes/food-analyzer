@@ -173,14 +173,14 @@ const Content = class Content {
 const Camera = class Camera {
   static open() {
     if (navigator.mediaDevices?.getUserMedia) {
+      const options = { facingMode: "environment" };
       navigator.mediaDevices
-        .getUserMedia({ video: { facingMode: "environment" } })
-        .then(function (stream) {
-          video.srcObject = stream;
-          video.play();
+        .getUserMedia({ video: options })
+        .then((stream) => {
+          Camera.playVideo(stream);
         })
-        .catch(function (error) {
-          console.log("Erro ao acessar a câmera: ", error);
+        .catch((error) => {
+          console.log("Erro ao acessar a câmera!", error);
         });
     }
   }
@@ -195,6 +195,12 @@ const Camera = class Camera {
     const image = canvas.toDataURL("image/png");
 
     return image;
+  }
+
+  static playVideo(stream) {
+    if (!video || !stream) throw new Error();
+    video.srcObject = stream;
+    video.play();
   }
 
   static async scan() {

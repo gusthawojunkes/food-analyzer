@@ -41,39 +41,48 @@
         </div>
       </div>
 
-      <h2>Busque pelo seu alimento</h2>
-      <div class="search-container">
-        <input
-          id="search-input"
-          type="text"
-          class="search-input"
-          placeholder="Ex: Banana, Aveia, etc..."
-        />
-        <button class="search-button" onclick="FoodController.searchByInput()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M0 0h24v24H0z" fill="none" />
-            <path
-              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.68 0 3.22-.64 4.37-1.69l.27.28v.79l5 4.99L20.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
+      <div id="content">
+        <div id="search-interface">
+          <h2>Busque pelo seu alimento</h2>
+          <div class="search-container">
+            <input
+              id="search-input"
+              type="text"
+              class="search-input"
+              placeholder="Ex: Banana, Aveia, etc..."
             />
-          </svg>
-        </button>
-      </div>
+            <button
+              class="search-button"
+              onclick="FoodController.searchByInput()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.68 0 3.22-.64 4.37-1.69l.27.28v.79l5 4.99L20.49 20l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"
+                />
+              </svg>
+            </button>
+          </div>
+          <h3>Ou</h3>
 
-      <h3>Ou</h3>
+          <h2>Escaneie com a câmera</h2>
+          <video id="video" autoplay></video>
+          <div id="capture">
+            <button onclick="Camera.scan()">Escanear</button>
+          </div>
+        </div>
 
-      <h2>Escaneie com a câmera</h2>
-      <video id="video" autoplay></video>
-      <div id="capture">
-        <button onclick="Camera.scan()">Escanear</button>
-      </div>
-      <div
-        id="food-main-info-content"
-        style="display: none"
-        class="food-name"
-      ></div>
-      <div id="tableContainer">
-        <div id="empty-table-message">Sem resultados por enquanto</div>
-        <div id="food-main-info"></div>
+        <div id="information">
+          <div
+            id="food-main-info-content"
+            style="display: none"
+            class="food-name"
+          ></div>
+          <div id="tableContainer">
+            <div id="empty-table-message">Sem resultados por enquanto...</div>
+            <div id="food-main-info"></div>
+          </div>
+        </div>
       </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>

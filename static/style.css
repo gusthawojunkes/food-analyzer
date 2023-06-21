@@ -7,15 +7,10 @@ body {
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   text-align: center;
 }
 
 .container {
-  max-width: 100%;
-  max-width: 1200px;
   background-color: #fff;
   padding: 20px;
   border-radius: 5px;
@@ -240,4 +235,21 @@ th {
   text-align: left;
   font-size: 16px;
   margin-bottom: 20px;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 600px) {
+  #content {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  #information {
+    width: 50%;
+  }
 }
