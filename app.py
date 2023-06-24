@@ -3,6 +3,9 @@ from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from food_data_central_api import FDCAPI
 from translator import Translator
+from custom_decorators import CachedRoute
+from flask_caching import Cache
+
 PT_BR = "pt-BR"
 EN_US = "en-US"
 
@@ -13,18 +16,23 @@ translator = Translator()
 translations = {}
 
 app = Flask(__name__, static_url_path='/static')
+cache = Cache(app)
+app.config['CACHE_TYPE'] = 'simple'
+app.config['CACHE_DEFAULT_TIMEOUT'] = (60 * 30)
+cached_route = CachedRoute(app).cached_route
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+@cached_route()
 @app.route('/api/search', methods=['POST'])
 def search():
     criteria = request.get_json()
     food = criteria['query']
     if (food is None):
         return jsonify({"error": "No food item specified"})
-    
+
     translated_food = find_translation(food, {
         "from": PT_BR,
         "to": EN_US
@@ -39,8 +47,6 @@ def search():
         if key not in translations:
             translations[key] = new_translations[key]
 
-    print(translations)
-
     return rows[0]
 
 """
@@ -51,7 +57,6 @@ def search():
 @app.route('/api/algorithm', methods=['POST'])
 def algorithm():
     body = request.get_json()
-    print(body)
     image = body.image
     return image;
 
