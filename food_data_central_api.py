@@ -50,26 +50,46 @@ class FDCAPI:
         "endDate": "2021-12-30"
     }
     """
-    def search_food_by_criteria(self, criteria = {}):
+    def search_food_by_criteria(self, criteria = {}, translations = None):
         founded = []
         response = self.request('v1/foods/list', body = criteria, request_type = 'POST')
         for row in response:
             description = row['description']
-            translated_description = translator.perform(description, {
+            translated_description = self.find_translation(description, {
                 "from": EN_US,
-                "to": PT_BR
+                "to": PT_BR,
+                "translations": translations
             })
+
+            key = f"{description}|{EN_US}=>{PT_BR}"
+            if key not in translations: translations[key] = translated_description
 
             row['description'] = translated_description
 
             for nutrient in row['foodNutrients']:
-                name = nutrient['name']
-                translated_nutrient = translator.perform(name, {
+                nutrient_name = nutrient['name']
+                translated_nutrient = self.find_translation(nutrient_name, {
                     "from": EN_US,
-                    "to": PT_BR
+                    "to": PT_BR,
+                    "translations": translations
                 })
+
+                key = f"{nutrient_name}|{EN_US}=>{PT_BR}"
+                if key not in translations: translations[key] = translated_nutrient
+
                 nutrient['name'] = translated_nutrient
 
             founded.append(row)
 
-        return founded
+        return { "rows": founded, "translations": translations }
+
+
+    def find_translation(self, text, params = {}):
+        language_from = params['from'] or EN_US
+        language_to = params['to'] or PT_BR
+        translations = params['translations'] or {}
+        key = f"{text}|{language_from}=>{language_to}"
+
+        if (key in translations): return translations[key]
+
+        return translator.perform(text, params)
