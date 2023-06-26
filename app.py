@@ -5,6 +5,10 @@ from food_data_central_api import FDCAPI
 from translator import Translator
 from custom_decorators import CachedRoute
 from flask_caching import Cache
+import base64
+import datetime;
+import shutil
+from algorithm import predict
 
 PT_BR = "pt-BR"
 EN_US = "en-US"
@@ -57,8 +61,35 @@ def search():
 @app.route('/api/algorithm', methods=['POST'])
 def algorithm():
     body = request.get_json()
-    image = body.image
-    return image;
+    image = body['image']
+    image = image[22:]
+
+    current_time = datetime.datetime.now()
+    time_stamp = current_time.timestamp()
+    file_dir = 'algorithm/predict/'+str(time_stamp)
+    os.mkdir(file_dir)
+
+    file_name = 'algorithm/predict/'+str(time_stamp)+'/predict.jpg'
+    decoded_data=base64.b64decode((image))
+
+    img_file = open(file_name, 'wb')
+    img_file.write(decoded_data)
+    img_file.close()
+
+    name_image = ''
+    time_stamp=str(time_stamp)
+    name_image = predict(time_stamp)
+
+    if os.path.exists(file_name):
+        os.remove(file_name)
+        os.rmdir(file_dir)
+
+    print("--------------")
+    print("name_image")
+    print(name_image)
+    print("--------------")
+
+    return image
 
 def find_translation(food, params = {}):
     language_from = params['from'] or EN_US

@@ -60,23 +60,23 @@ const FoodController = class FoodController {
 
 const AlgorithmController = class AlgorithmController {
   static async applyFor(image) {
-    return "Mamão";
+    console.log(image)
 
-    // if (!image?.includes("data:image/png;base64,")) {
-    //   return;
-    // }
+    if (!image?.includes("data:image/png;base64,")) {
+      return;
+    }
 
-    // console.log(`Applying Algorithm`);
+    console.log(`Applying Algorithm`);
 
-    // let food = undefined;
+    let food = undefined;
 
-    // try {
-    //   food = await API.request("/algorithm", { image });
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    try {
+      food = await API.request("/algorithm", { "image": image });
+    } catch (error) {
+      console.error(error);
+    }
 
-    // return food;
+    return food;
   }
 };
 
@@ -207,15 +207,16 @@ const Camera = class Camera {
     try {
       const image = Camera.capture();
       const food = await AlgorithmController.applyFor(image);
+
       if (!food || food === "") {
         throw new Error(
           "Nenhum alimento informado, impossível encontrar os dados nutricionais!"
         );
       }
-      await FlowController.perform(
-        food,
-        "Aguarde enquanto processamos a sua imagem..."
-      );
+      // await FlowController.perform(
+      //   food,
+      //   "Aguarde enquanto processamos a sua imagem..."
+      // );
     } catch (error) {
       console.error(error);
       if (error.message && error.message !== "") {
