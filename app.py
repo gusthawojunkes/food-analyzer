@@ -5,6 +5,12 @@ from food_data_central_api import FDCAPI
 from translator import Translator
 from custom_decorators import CachedRoute
 from flask_caching import Cache
+import base64
+import datetime;
+import shutil
+import sys
+
+from algorithm.algorithm import predict
 
 PT_BR = "pt-BR"
 EN_US = "en-US"
@@ -56,9 +62,52 @@ def search():
 """
 @app.route('/api/algorithm', methods=['POST'])
 def algorithm():
-    body = request.get_json()
-    image = body.image
-    return image;
+    try:
+        image = ''
+        name_image = ''
+        
+        body = request.get_json()
+        image = body['image']
+        image = image[22:]
+
+        current_time = datetime.datetime.now()
+        time_stamp = current_time.timestamp()
+
+        file_dir = 'algorithm/predict/'+str(time_stamp)+'/'
+        os.mkdir(file_dir)
+
+        file_dir_img = 'algorithm/predict/'+str(time_stamp)+'/img/'
+        os.mkdir(file_dir_img)
+
+        try:
+            file_name = 'algorithm/predict/'+str(time_stamp)+'/img/predict.jpg'
+            decoded_data=base64.b64decode((image))
+        except:
+            return ''
+
+        try:
+            img_file = open(file_name, 'wb')
+            img_file.write(decoded_data)
+            img_file.close()
+        except:
+            return ''
+
+        time_stamp=str(time_stamp)
+        name_image = predict(time_stamp)
+    except NameError:
+        name_image = ''
+    
+    deleteDir(file_name,file_dir,file_dir_img)
+    
+    response = {'name': name_image}
+    
+    return response
+
+def deleteDir(file_name,file_dir,file_dir_img):
+    if os.path.exists(file_name):
+        os.remove(file_name)
+        os.rmdir(file_dir_img)
+        os.rmdir(file_dir)
 
 def find_translation(food, params = {}):
     language_from = params['from'] or EN_US
