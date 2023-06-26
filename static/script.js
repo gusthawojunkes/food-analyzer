@@ -60,22 +60,25 @@ const FoodController = class FoodController {
 
 const AlgorithmController = class AlgorithmController {
   static async applyFor(image) {
-
     if (!image?.includes("data:image/png;base64,")) {
       return; 
     }
 
     console.log(`Applying Algorithm`);
 
+    let json = undefined;
     let food = undefined;
+    let foodName = undefined;
 
     try {
-      food = await API.request("/algorithm", { "image": image });
+      food = await API.request("/algorithm", { "image": image })
+      json = await food.json()
+      foodName = await json.name
     } catch (error) {
       console.error(error);
     }
 
-    return food;
+    return foodName;
   }
 };
 

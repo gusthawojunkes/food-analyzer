@@ -8,7 +8,7 @@ modelDirectory = 'algorithm/model.h5'
 exist = os.path.exists(modelDirectory)
 
 def predict(time_stamp):
-    print('inicio do predict ')
+    print('inicio do predict: '+time_stamp)
     batch_size = 32
     image_size = (80, 80)
 
