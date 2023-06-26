@@ -93,7 +93,6 @@ def algorithm():
         except:
             return ''
 
-        time_stamp=1687738120.141953
         time_stamp=str(time_stamp)
         name_image = predict(time_stamp)
     except NameError:
