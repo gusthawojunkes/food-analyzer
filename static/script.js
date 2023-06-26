@@ -60,10 +60,9 @@ const FoodController = class FoodController {
 
 const AlgorithmController = class AlgorithmController {
   static async applyFor(image) {
-    console.log(image)
 
     if (!image?.includes("data:image/png;base64,")) {
-      return;
+      return; 
     }
 
     console.log(`Applying Algorithm`);

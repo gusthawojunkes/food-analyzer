@@ -8,7 +8,9 @@ from flask_caching import Cache
 import base64
 import datetime;
 import shutil
-from algorithm import predict
+import sys
+
+from algorithm.algorithm import predict
 
 PT_BR = "pt-BR"
 EN_US = "en-US"
@@ -60,36 +62,52 @@ def search():
 """
 @app.route('/api/algorithm', methods=['POST'])
 def algorithm():
-    body = request.get_json()
-    image = body['image']
-    image = image[22:]
+    try:
+        image = ''
+        name_image = ''
+        
+        body = request.get_json()
+        image = body['image']
+        image = image[22:]
+        print(image)
 
-    current_time = datetime.datetime.now()
-    time_stamp = current_time.timestamp()
-    file_dir = 'algorithm/predict/'+str(time_stamp)
-    os.mkdir(file_dir)
+        current_time = datetime.datetime.now()
+        time_stamp = current_time.timestamp()
 
-    file_name = 'algorithm/predict/'+str(time_stamp)+'/predict.jpg'
-    decoded_data=base64.b64decode((image))
+        file_dir = 'algorithm/predict/'+str(time_stamp)+'/'
+        os.mkdir(file_dir)
 
-    img_file = open(file_name, 'wb')
-    img_file.write(decoded_data)
-    img_file.close()
+        file_dir_img = 'algorithm/predict/'+str(time_stamp)+'/img/'
+        os.mkdir(file_dir_img)
 
-    name_image = ''
-    time_stamp=str(time_stamp)
-    name_image = predict(time_stamp)
+        try:
+            file_name = 'algorithm/predict/'+str(time_stamp)+'/img/predict.jpg'
+            decoded_data=base64.b64decode((image))
+        except:
+            return ''
 
+        try:
+            img_file = open(file_name, 'wb')
+            img_file.write(decoded_data)
+            img_file.close()
+        except:
+            return ''
+
+        time_stamp=1687738120.141953
+        time_stamp=str(time_stamp)
+        name_image = predict(time_stamp)
+    except NameError:
+        name_image = ''
+    
+    deleteDir(file_name,file_dir,file_dir_img)
+    
+    return name_image
+
+def deleteDir(file_name,file_dir,file_dir_img):
     if os.path.exists(file_name):
         os.remove(file_name)
+        os.rmdir(file_dir_img)
         os.rmdir(file_dir)
-
-    print("--------------")
-    print("name_image")
-    print(name_image)
-    print("--------------")
-
-    return image
 
 def find_translation(food, params = {}):
     language_from = params['from'] or EN_US
