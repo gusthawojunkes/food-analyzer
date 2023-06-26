@@ -69,7 +69,6 @@ def algorithm():
         body = request.get_json()
         image = body['image']
         image = image[22:]
-        print(image)
 
         current_time = datetime.datetime.now()
         time_stamp = current_time.timestamp()
@@ -93,13 +92,11 @@ def algorithm():
         except:
             return ''
 
-        time_stamp=1687738120.141951
         time_stamp=str(time_stamp)
         name_image = predict(time_stamp)
     except NameError:
         name_image = ''
     
-    print(name_image)
     deleteDir(file_name,file_dir,file_dir_img)
     
     response = {'name': name_image}
