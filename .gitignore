@@ -2,3 +2,5 @@
 .venv
 __pycache__/
 algorithm/model.h5
+dist/
+food_analyzer.egg-info
