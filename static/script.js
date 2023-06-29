@@ -10,6 +10,8 @@ const labelByKey = {
   quantity: "Quantidade",
 };
 const video = document.getElementById("video");
+const NO_FOOD_HTML_ERROR =
+  "<h3>Nenhum alimento informado!</h3>Impossível encontrar os dados nutricionais";
 
 const API = class API {
   static async request(url, body) {
@@ -37,7 +39,9 @@ const FoodController = class FoodController {
       throw new Error();
     }
 
-    console.log(`Requesting Nutricional Information for ${food}`);
+    Content.changeLoadingMessageTo(
+      `Buscando os dados nutricionais para: ${food}...`
+    );
 
     try {
       const response = await API.request("/search", {
@@ -61,28 +65,29 @@ const FoodController = class FoodController {
 const AlgorithmController = class AlgorithmController {
   static async applyFor(image) {
     if (!image?.includes("data:image/png;base64,")) {
-      return;
+      return; //TODO throw an exception
     }
 
-    console.log(`Applying Algorithm`);
-
-    let foodName = undefined;
-
     try {
-      let food = await API.request("/algorithm", { "image": image })
-      let json = await food.json()
-      foodName = await json.name
+      const response = await API.request("/algorithm", { image: image });
+      const food = await response.json();
+      console.log(food);
+      return food.name;
     } catch (error) {
       console.error(error);
     }
 
-    return foodName;
+    return undefined;
   }
 };
 
 const Content = class Content {
   static startLoading(message = "Carregando...") {
     document.getElementById("overlay").style.display = "flex";
+    document.getElementById("loading-message").textContent = message;
+  }
+
+  static changeLoadingMessageTo(message = "Carregando...") {
     document.getElementById("loading-message").textContent = message;
   }
 
@@ -154,7 +159,7 @@ const Content = class Content {
     const $errorMessageElement = document.getElementById("errorMessage");
     $errorMessageElement.innerHTML = message;
     $modal.style.display = "flex";
-    setTimeout(hideErrorModal, 10000);
+    setTimeout(Content.hideErrorModal, 10000);
   }
 
   static hideErrorModal() {
@@ -206,6 +211,7 @@ const Camera = class Camera {
   static async scan() {
     try {
       const image = Camera.capture();
+      Content.startLoading("Aguarde enquanto processamos a sua imagem...");
       const food = await AlgorithmController.applyFor(image);
 
       if (!food || food === "") {
@@ -238,11 +244,11 @@ const FlowController = class FlowController {
   ) {
     try {
       if (!food || food === "") {
-        throw new Error(
-          "<h3>Nenhum alimento informado!</h3>Impossível encontrar os dados nutricionais"
-        );
+        throw new Error(NO_FOOD_HTML_ERROR);
       }
+
       Content.startLoading(loadingMessage);
+
       const nutritionalInformation =
         await FoodController.searchNutritionalInformation(food);
       if (!nutritionalInformation) {
@@ -250,13 +256,19 @@ const FlowController = class FlowController {
           `<h3>Sem dados.</h3>Não foi possível encontrar as informações nutricionais do alimento '${food}'!`
         );
       }
+
+      Content.changeLoadingMessageTo("Preparando os dados encontrados...");
+
       const nutrients = this.prepareNutritionalInformation(
         nutritionalInformation
       );
+
       Content.removeOldContent();
+      Content.changeLoadingMessageTo("Construindo a tabela nutricional...");
       Content.addFoodMainInformationToContent(
         nutritionalInformation.description
       );
+
       Content.createNutritionalInformationTableDynamically(nutrients);
       Content.scrollToNutritionalInformationTable();
     } catch (error) {
@@ -267,6 +279,7 @@ const FlowController = class FlowController {
         Content.showErrorModal();
       }
     } finally {
+      Content.changeLoadingMessageTo("Finalizando...");
       Content.stopLoading();
       Content.hideNoResultsField();
     }
