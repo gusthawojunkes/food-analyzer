@@ -62,9 +62,8 @@ def search():
 """
 @app.route('/api/algorithm', methods=['POST'])
 def algorithm():
+    food = None
     try:
-        name_image = ''
-        
         body = request.get_json()
         image = body['image'][22:]
 
@@ -90,19 +89,27 @@ def algorithm():
         except:
             return ''
 
-        name_image = predict(str(time_stamp))
+        food = predict(str(time_stamp))
     except NameError:
-        name_image = ''
-    
+        food = ''
+
+    if (food is None or food == ''):
+        return jsonify({"error": "No food item specified"})
+
+    food = find_translation(food, {
+        "from": EN_US,
+        "to": PT_BR
+    })
+
     delete_dir(predict_file, file_directory, image_directory)
     
-    return { 'name': name_image }
+    return { 'name': food }
 
-def delete_dir(predict_file ,file_directory, image_directory):
-    if os.path.exists(predict_file):
-        os.remove(predict_file)
-        os.rmdir(image_directory)
-        os.rmdir(file_directory)
+def delete_dir(predict_file, file_directory, image_directory):
+    print(predict_file)
+    if os.path.exists(predict_file): os.remove(predict_file)
+    if os.path.exists(image_directory): os.rmdir(image_directory)
+    if os.path.exists(file_directory): os.rmdir(file_directory)
 
 def find_translation(food, params = {}):
     language_from = params['from'] or EN_US

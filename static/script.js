@@ -65,7 +65,9 @@ const FoodController = class FoodController {
 const AlgorithmController = class AlgorithmController {
   static async applyFor(image) {
     if (!image?.includes("data:image/png;base64,")) {
-      return; //TODO throw an exception
+      throw new Error(
+        "É necessário enviar uma imagem para executar o altoritmo"
+      );
     }
 
     try {
@@ -167,6 +169,13 @@ const Content = class Content {
     modal.style.display = "none";
   }
 
+  static showNoResultsField() {
+    const $div = document.getElementById("empty-table-message");
+    if ($div) {
+      $div.style.display = "block";
+    }
+  }
+
   static hideNoResultsField() {
     const $div = document.getElementById("empty-table-message");
     if ($div) {
@@ -215,6 +224,7 @@ const Camera = class Camera {
       const food = await AlgorithmController.applyFor(image);
 
       if (!food || food === "") {
+        Content.showNoResultsField();
         throw new Error(
           "Nenhum alimento informado, impossível encontrar os dados nutricionais!"
         );
@@ -232,7 +242,6 @@ const Camera = class Camera {
       }
     } finally {
       Content.stopLoading();
-      Content.hideNoResultsField();
     }
   }
 };
@@ -269,6 +278,7 @@ const FlowController = class FlowController {
         nutritionalInformation.description
       );
 
+      Content.hideNoResultsField();
       Content.createNutritionalInformationTableDynamically(nutrients);
       Content.scrollToNutritionalInformationTable();
     } catch (error) {
@@ -278,10 +288,10 @@ const FlowController = class FlowController {
       } else {
         Content.showErrorModal();
       }
+      Content.showNoResultsField();
     } finally {
       Content.changeLoadingMessageTo("Finalizando...");
       Content.stopLoading();
-      Content.hideNoResultsField();
     }
   }
 
@@ -293,8 +303,8 @@ const FlowController = class FlowController {
     return (nutritionalInformation.foodNutrients ?? []).map((nutrient) => {
       return {
         name: nutrient.name,
-        amount: `${nutrient.amount}g`,
-        quantity: `${nutrient.number}${nutrient.unitName}`.toLocaleLowerCase(),
+        amount: `${nutrient.number}g`,
+        quantity: `${nutrient.amount}${nutrient.unitName}`.toLocaleLowerCase(),
       };
     });
   }

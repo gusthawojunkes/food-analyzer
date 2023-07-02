@@ -11,21 +11,22 @@ def predict(time_stamp):
     print('inicio do predict: '+time_stamp)
     batch_size = 32
     image_size = (80, 80)
+    directory = f'./algorithm/predict/{time_stamp}'
 
-    ds_predict = tf.keras.preprocessing.image_dataset_from_directory('./algorithm/predict/'+time_stamp, 
-                                                                     labels='inferred', 
-                                                                     shuffle = True,
-                                                                     color_mode='rgb', 
-                                                                     batch_size=batch_size, 
-                                                                     image_size=image_size, 
-                                                                     seed=1234,
-                                                                     validation_split=0.2, 
-                                                                     subset="validation")
+    ds_predict = tf.keras.preprocessing.image_dataset_from_directory(directory, 
+        labels='inferred', 
+        shuffle = True,
+        color_mode='rgb', 
+        batch_size=batch_size, 
+        image_size=image_size, 
+        seed=1234,
+        validation_split=0.2, 
+        subset="validation"
+    )
 
     if exist == False: 
         Archive('algorithm/model.rar').extractall('algorithm/')
     model = load_model('./algorithm/model.h5')
-    
 
     predictions = model.predict(ds_predict)
 
